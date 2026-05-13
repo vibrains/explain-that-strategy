@@ -85,13 +85,12 @@ def main():
 
     # ── 2. Load session (cached; spinner shown if first time) ──
     logger.info(f"Loading session: {year} {gp} ({session_code})")
+    session = None
     try:
         session = load_session(year, gp, session_code)
         logger.info(f"Successfully loaded session with {len(session.laps)} laps")
     except Exception as e:
         logger.error(f"Failed to load session: {e}")
-        st.error(f"Could not load session: {e}")
-        return
 
     # ── 3. Render 4-column filter bar (Season | GP | Session | Driver) ──
     with st.container(key="filter-bar"):
@@ -125,7 +124,7 @@ def main():
             session_code = "R" if session_type == "Race" else "S"
 
         with cols[3]:
-            if session.results is not None and not session.results.empty:
+            if session is not None and session.results is not None and not session.results.empty:
                 results_sorted = (
                     session.results
                     .sort_values("Position", na_position="last")
@@ -162,6 +161,13 @@ def main():
             else:
                 st.selectbox("Driver", ["—"], disabled=True, key="filter_driver_placeholder")
                 driver_code = None
+
+    if session is None:
+        st.error(
+            "Race data isn't available yet for this event. "
+            "Try selecting a completed race or an earlier season."
+        )
+        st.stop()
 
     if driver_code is None:
         render_masthead(session, year, gp, session_code)
