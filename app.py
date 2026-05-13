@@ -170,10 +170,27 @@ def main():
         st.stop()
 
     if driver_code is None:
+        st.markdown(
+            """
+            <style>
+            .st-key-filter-bar .st-key-filter_driver div[data-baseweb="select"] > div,
+            .st-key-filter-bar .st-key-filter_driver_placeholder div[data-baseweb="select"] > div {
+                animation: pulse-border 2s ease-in-out infinite;
+                border-color: var(--accent) !important;
+                border-radius: 8px;
+            }
+            </style>
+            """,
+            unsafe_allow_html=True,
+        )
         render_masthead(session, year, gp, session_code)
         render_qualifying_results(year, gp, session)
         render_results_table(session, "")
-        st.info("Select a driver above to see tire strategy, lap times, and alternative simulations.")
+        st.info(
+            "Pick a driver from the **Driver** dropdown above to explore their "
+            "tire strategy, lap-by-lap pace, pit stop timing, team radio, and "
+            "simulated alternative strategies."
+        )
         st.stop()
 
     # ── 4. Race-level derived data (weather + SC) ──

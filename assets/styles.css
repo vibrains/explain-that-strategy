@@ -775,6 +775,13 @@ div[data-baseweb="select"] * {
   cursor: pointer !important;
 }
 
+/* Pulsing highlight on the driver dropdown when no driver is selected.
+   Injected conditionally via app.py — the keyframes must always be present. */
+@keyframes pulse-border {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(197, 36, 42, 0.5); }
+  50% { box-shadow: 0 0 0 4px rgba(197, 36, 42, 0.25); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
