@@ -20,7 +20,7 @@ def render_verdict(results_df: pd.DataFrame) -> None:
                 "period for a cheap stop."
             )
         st.markdown(
-            f"<div style='padding:8px 0;color:var(--ink);font-size:var(--text-base);line-height:1.5;'>"
+            f'<div class="verdict-card">'
             f"The optimal simulated strategy was <b>{best['Strategy']}</b>, "
             f"which could have saved <b>{abs(best['Delta']):.1f}s</b>.{sc_msg} "
             f"Roughly <b>{abs(best['Delta'])/PIT_STOP_LOSS_NORMAL:.1f}</b> pit stops worth of time.</div>",
@@ -28,7 +28,7 @@ def render_verdict(results_df: pd.DataFrame) -> None:
         )
     else:
         st.markdown(
-            "<div style='padding:8px 0;color:var(--ink);font-size:var(--text-base);line-height:1.5;'>"
+            '<div class="verdict-card verdict-card--nailed">'
             "The team nailed it — no significantly faster strategy found in simulation.</div>",
             unsafe_allow_html=True,
         )
