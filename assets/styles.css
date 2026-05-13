@@ -1,0 +1,796 @@
+@import url("https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600;700&family=Titillium+Web:wght@400;600;700;900&display=swap");
+
+:root {
+  /* Paper & ink */
+  --paper: #fbf9f4;
+  --paper-shade: #edeae2;
+  --ink: #1a1a1c;
+  --ink-2: #3a3a3c;
+  --ink-3: #7a7568;
+  --ink-4: #a8a498;
+  --rule: #e6e3db;
+  --rule-soft: #efede7;
+
+  /* Accents */
+  --accent: #c5242a;
+  --alert: #8f2f35;
+  --warn: #b88a28;
+  --info: #5a7fa8;
+
+  /* Tire palette — 2026 Pirelli P Zero official sidewall colors */
+  --tire-soft: #e30613; /* Red — softest, highest grip, fastest deg */
+  --tire-medium: #c89800; /* Darker gold — balanced */
+  --tire-hard: #4a4a4a; /* Dark gray for visibility on paper */
+  --tire-inter: #00a54f; /* Green — damp track */
+  --tire-wet: #0049b0; /* Blue — heavy rain */
+
+  /* Type */
+  --font-body:
+    "Titillium Web", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: "Titillium Web", -apple-system, sans-serif;
+  --font-mono:
+    "Geist Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --text-xs: 0.78rem;
+  --text-sm: 0.88rem;
+  --text-base: 0.95rem;
+  --text-md: 1.05rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.85rem;
+  --text-2xl: 2.4rem;
+
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+
+  /* Radii */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 8px;
+
+  /* Motion */
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 150ms;
+  --dur-med: 260ms;
+  --dur-slow: 440ms;
+}
+
+/* Lock to light appearance regardless of system preference */
+:root {
+  color-scheme: light only;
+}
+
+/* Base typography — display family for body copy; mono reserved for data */
+html,
+body,
+.stApp,
+.stApp * {
+  font-family: var(--font-body);
+}
+html,
+body {
+  background: var(--paper);
+}
+.stApp {
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.6;
+}
+
+/* Audio player — subtle paper tint */
+[data-testid="stAudio"] audio {
+  background: var(--paper-shade);
+  border-radius: var(--radius-md);
+}
+
+/* Re-assert the display font on headings and editorial surfaces */
+.app-title h1,
+.race-masthead .eyebrow,
+.race-masthead h2,
+.section-head,
+.main h1[id],
+[data-testid="stHeading"] h1 {
+  font-family: var(--font-display) !important;
+}
+
+/* Preserve Material Symbols icon font (used by Streamlit chrome — audio
+   controls, expanders, close buttons, etc.). Without this, the ligature text
+   like "keyboard_arrow_right" renders as overlapping literal words. */
+.material-icons,
+.material-icons-outlined,
+.material-icons-round,
+.material-icons-sharp,
+.material-symbols-outlined,
+.material-symbols-rounded,
+.material-symbols-sharp,
+[class*="material-symbols"],
+[class*="material-icons"],
+[data-testid*="Material"],
+[data-testid*="Icon"] i,
+[data-testid*="icon"] i {
+  font-family:
+    "Material Symbols Outlined", "Material Symbols Rounded", "Material Icons" !important;
+  font-weight: normal !important;
+  font-style: normal !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+}
+/* Page width — 1200px centered. Streamlit 1.56 uses a stable block-container
+   class and the Settings menu no longer exposes a wide-mode toggle, so a
+   simple rule without !important is sufficient. */
+.stApp [class*="block-container"] {
+  padding-top: var(--space-6);
+  padding-bottom: var(--space-7);
+  padding-left: var(--space-5);
+  padding-right: var(--space-5);
+  max-width: 1200px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+h1,
+h2,
+h3,
+h4,
+h5 {
+  letter-spacing: -0.015em;
+  color: var(--ink);
+}
+
+/* App title — motorsport display */
+.main h1[id],
+[data-testid="stHeading"] h1,
+.app-title h1 {
+  font-family: var(--font-display) !important;
+  font-weight: 900;
+  font-size: var(--text-2xl);
+  letter-spacing: -0.01em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin: 0;
+}
+
+/* Title row: logo + wordmark */
+.app-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+  flex-wrap: wrap;
+}
+.app-title h1 {
+  /* Let the word break at normal boundaries, not mid-letter */
+  overflow-wrap: break-word;
+  word-break: normal;
+  hyphens: none;
+}
+
+/* Descriptive subtitle under the app title */
+.app-subtitle {
+  max-width: 62ch;
+  margin: 0 0 var(--space-5) 0;
+  color: var(--ink-3);
+  font-size: var(--text-base);
+  line-height: 1.55;
+}
+
+/* Mobile — stack the logo above the title so the wordmark has full width */
+@media (max-width: 640px) {
+  .app-title {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+  .f1-mark--title {
+    height: 26px;
+  }
+  .main h1[id],
+  [data-testid="stHeading"] h1,
+  .app-title h1 {
+    font-size: clamp(1.6rem, 8vw, 2rem);
+    line-height: 1.05;
+  }
+  .app-subtitle {
+    font-size: var(--text-sm);
+  }
+  .stApp [class*="block-container"] {
+    padding-left: var(--space-3);
+    padding-right: var(--space-3);
+  }
+  [data-testid="stDataFrame"],
+  .stPlotlyChart {
+    padding: var(--space-3);
+  }
+}
+
+/* F1 logo mark (SVG). Sized per-context via modifier class. */
+.f1-mark {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+  vertical-align: middle;
+}
+.f1-mark svg {
+  display: block;
+  height: 100%;
+  width: auto;
+  flex-shrink: 0;
+}
+.f1-mark--title {
+  height: 34px;
+}
+.f1-mark--eyebrow {
+  height: 16px;
+  margin-left: 4px;
+  transform: translateY(-1px);
+}
+
+/* Race masthead */
+.race-masthead {
+  padding: var(--space-1) 0 var(--space-5) 0;
+  border-bottom: 1px solid var(--rule);
+}
+.race-masthead .eyebrow {
+  font-family: var(--font-display);
+  color: var(--ink-3);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.race-masthead .eyebrow .sep {
+  color: var(--ink-4);
+}
+.race-masthead h2 {
+  font-family: var(--font-display);
+  color: var(--ink);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.005em;
+  margin: var(--space-2) 0 var(--space-1) 0;
+  line-height: 1.05;
+}
+.race-masthead .meta {
+  color: var(--ink-3);
+  font-size: var(--text-sm);
+}
+
+/* Section headers */
+.section-head {
+  font-family: var(--font-display);
+  font-size: var(--text-md);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  margin: var(--space-6) 0 var(--space-3) 0;
+}
+.section-head .hint {
+  font-family: var(--font-body);
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--ink-3);
+  font-size: var(--text-sm);
+  margin-left: var(--space-2);
+}
+
+/* Inline tag */
+.tag {
+  display: inline-block;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  margin-right: var(--space-1);
+  border: 1px solid var(--rule);
+  color: var(--ink-2);
+  background: transparent;
+  font-family: var(--font-body);
+}
+.tag-sc {
+  color: var(--alert);
+  border-color: #d9b4b7;
+}
+.tag-vsc {
+  color: var(--warn);
+  border-color: #d7c697;
+}
+.tag-rain,
+.tag-wet {
+  color: var(--info);
+  border-color: #b7c4d5;
+}
+.tag-dry {
+  color: var(--warn);
+  border-color: #d7c697;
+}
+.tag-mixed {
+  color: var(--info);
+  border-color: #b7c4d5;
+}
+
+/* Event list */
+.event-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.event-list li {
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--rule-soft);
+  font-size: var(--text-base);
+}
+.event-list li:last-child {
+  border-bottom: none;
+}
+.event-list li .ev-title {
+  font-weight: 500;
+  color: var(--ink);
+}
+.event-list li .ev-sub {
+  color: var(--ink-3);
+  font-size: var(--text-xs);
+  margin-top: var(--space-1);
+}
+.event-list li .dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: var(--space-2);
+  vertical-align: middle;
+}
+.event-list li.sc .dot {
+  background: var(--alert);
+}
+.event-list li.vsc .dot {
+  background: var(--warn);
+}
+.event-list li.rain .dot {
+  background: var(--info);
+}
+
+/* Pit note */
+.pit-note {
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--rule-soft);
+  font-size: var(--text-base);
+  color: var(--ink-2);
+}
+.pit-note:last-child {
+  border-bottom: none;
+}
+.pit-note .pit-lap {
+  font-weight: 600;
+  color: var(--ink);
+}
+.pit-note .pit-detail {
+  color: var(--ink-3);
+}
+
+/* Streamlit metric normalization */
+[data-testid="stMetricLabel"] p {
+  font-size: var(--text-sm);
+  color: var(--ink-3);
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 500;
+}
+[data-testid="stMetricValue"] {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--ink);
+  font-family: var(--font-mono);
+}
+
+/* Caption */
+.stCaption,
+[data-testid="stCaption"] {
+  color: var(--ink-3);
+  font-size: var(--text-sm);
+}
+
+/* Radio (alternatives filter) — flatten chip look */
+[data-testid="stRadio"] label {
+  font-size: var(--text-sm);
+  color: var(--ink-2);
+  border-radius: var(--radius-md);
+  padding: 4px 6px;
+}
+
+/* Form inputs — align with paper/ink palette */
+.stApp input[type="text"],
+.stApp input[type="number"],
+.stApp input[type="search"],
+.stApp select,
+.stApp textarea {
+  background: #fff;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--ink);
+  transition:
+    border-color var(--dur-fast) var(--ease-out-quart),
+    box-shadow var(--dur-fast) var(--ease-out-quart),
+    background-color var(--dur-fast) var(--ease-out-quart);
+}
+
+.stApp input[type="text"]:hover,
+.stApp input[type="number"]:hover,
+.stApp input[type="search"]:hover,
+.stApp select:hover,
+.stApp textarea:hover {
+  background: color-mix(in srgb, #fff 90%, var(--paper-shade) 10%);
+}
+
+.stApp input[type="text"]:focus-visible,
+.stApp input[type="number"]:focus-visible,
+.stApp input[type="search"]:focus-visible,
+.stApp select:focus-visible,
+.stApp textarea:focus-visible {
+  outline: none;
+  border-color: var(--info);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--info) 35%, transparent);
+}
+
+/* Links */
+.stApp a {
+  text-decoration: none;
+  color: var(--info);
+}
+.stApp a:hover {
+  text-decoration: underline;
+}
+
+/* Data table polish */
+[data-testid="stDataFrame"] {
+  font-family: var(--font-body);
+}
+
+/* Dataframe container — clean, flush surface */
+[data-testid="stDataFrame"] {
+  border-radius: var(--radius-lg);
+}
+
+[data-testid="stDataFrame"] [role="row"] {
+  padding: 2px var(--space-1);
+}
+
+[data-testid="stDataFrame"] [role="gridcell"] {
+  font-size: clamp(0.9rem, 1vw + 0.3rem, 1rem);
+  line-height: 1.5;
+}
+
+/* Chart container — rounded corners (no background / border / padding so
+   it sits flush, but still matches the dataframe radius). */
+.stPlotlyChart {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+/* Muted helpers */
+.text-muted {
+  color: var(--ink-3);
+}
+.text-faint {
+  color: var(--ink-4);
+}
+
+/* ------------------------------------------------------------------
+   Motion — subtle entrance choreography + F1 start-lights loader
+   ------------------------------------------------------------------ */
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 8px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Masthead, section headers, charts, tables, pit notes — staggered entrance */
+.race-masthead,
+.section-head,
+.event-list,
+.pit-note,
+.stPlotlyChart,
+[data-testid="stDataFrame"],
+[data-testid="stRadio"],
+[data-testid="stExpander"] {
+  animation: fade-up var(--dur-slow) var(--ease-out-quart) both;
+}
+.race-masthead {
+  animation-delay: 0ms;
+}
+.section-head {
+  animation-delay: 40ms;
+}
+.stPlotlyChart {
+  animation-delay: 80ms;
+}
+[data-testid="stDataFrame"] {
+  animation-delay: 60ms;
+}
+
+/* Driver summary card */
+.race-masthead + div,
+.race-masthead ~ [data-testid="stHorizontalBlock"] {
+  animation: fade-up var(--dur-slow) var(--ease-out-quart) both 40ms;
+}
+
+/* Tags — micro hover lift */
+.tag {
+  transition:
+    transform var(--dur-fast) var(--ease-out-quart),
+    border-color var(--dur-fast) var(--ease-out-quart),
+    color var(--dur-fast) var(--ease-out-quart);
+}
+.tag:hover {
+  transform: translateY(-1px);
+  border-color: var(--ink-3);
+}
+
+/* Event list row hover */
+.event-list li {
+  transition: background var(--dur-fast) var(--ease-out-quart);
+}
+.event-list li:hover {
+  background: var(--paper-shade);
+}
+
+/* Pit notes hover */
+.pit-note {
+  transition: background var(--dur-fast) var(--ease-out-quart);
+}
+.pit-note:hover {
+  background: var(--paper-shade);
+}
+
+/* Results table row hover — subtle */
+[data-testid="stDataFrame"] [role="row"]:hover {
+  background: var(--paper-shade) !important;
+  transition: background var(--dur-fast) var(--ease-out-quart);
+}
+
+/* Streamlit buttons + radios — subtle press */
+.stButton > button,
+[data-testid="stRadio"] label {
+  transition:
+    transform var(--dur-fast) var(--ease-out-quart),
+    background-color var(--dur-fast) var(--ease-out-quart),
+    border-color var(--dur-fast) var(--ease-out-quart);
+}
+.stButton > button:hover {
+  transform: translateY(-1px);
+}
+.stButton > button:active {
+  transform: translateY(0);
+}
+
+.stButton > button:focus-visible,
+[data-testid="stRadio"] input:focus-visible + label,
+[data-testid="stExpander"] summary:focus-visible,
+[data-testid="stDataFrame"] [role="row"]:focus-visible,
+.stApp input[type="text"]:focus-visible,
+.stApp input[type="number"]:focus-visible,
+.stApp input[type="search"]:focus-visible,
+.stApp select:focus-visible,
+.stApp textarea:focus-visible {
+  outline: 2px solid var(--info);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--info) 30%, transparent);
+}
+
+[data-testid="stRadio"] label:hover {
+  background: color-mix(in srgb, var(--paper-shade) 70%, transparent);
+}
+[data-testid="stRadio"] label:active {
+  transform: translateY(0);
+}
+
+/* Expander — smoother reveal */
+[data-testid="stExpander"] details[open] > div:last-child {
+  animation: fade-up var(--dur-med) var(--ease-out-quart);
+}
+
+/* ---------------------- F1 START-LIGHTS LOADER ------------------- */
+/* Replace Streamlit's default spinner with the classic 5-light sequence:
+   red lights appear one-by-one left→right, hold briefly, then all go out. */
+
+/* Center the spinner container (located via the icon it contains) */
+.stApp div:has(> span > [data-testid="stSpinnerIcon"]) {
+  padding: var(--space-3) 0 !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100% !important;
+  text-align: center !important;
+}
+/* Hide the native icon wrapper so it can't push the text off-center */
+.stApp span:has(> [data-testid="stSpinnerIcon"]),
+.stApp [data-testid="stSpinnerIcon"],
+.stApp [data-testid="stSpinner"] i,
+.stApp [data-testid="stSpinner"] svg {
+  display: none !important;
+}
+/* Style the text container */
+.stApp div:has(> span > [data-testid="stSpinnerIcon"]) > div {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: var(--space-4);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-2);
+  text-align: center !important;
+}
+/* Center the paragraph inside the markdown container */
+.stApp div:has(> span > [data-testid="stSpinnerIcon"]) p {
+  text-align: center !important;
+}
+/* Inject the 5 start-lights via box-shadow on a single pseudo-element */
+.stApp div:has(> span > [data-testid="stSpinnerIcon"]) > div::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: transparent;
+  box-shadow:
+    0 0 0 1px var(--rule-soft) inset,
+    14px 0 0 0 transparent,
+    28px 0 0 0 transparent,
+    42px 0 0 0 transparent,
+    56px 0 0 0 transparent;
+  margin-left: 2px;
+  margin-right: 56px;
+  animation: f1-start-lights 2s var(--ease-out-quart) infinite;
+}
+
+@keyframes f1-start-lights {
+  /* Lights off */
+  0%,
+  6% {
+    background: transparent;
+    box-shadow:
+      0 0 0 1px var(--rule) inset,
+      14px 0 0 0 transparent,
+      28px 0 0 0 transparent,
+      42px 0 0 0 transparent,
+      56px 0 0 0 transparent;
+  }
+  /* Light 1 on */
+  14% {
+    background: var(--alert);
+    box-shadow:
+      0 0 0 0 transparent,
+      14px 0 0 0 transparent,
+      28px 0 0 0 transparent,
+      42px 0 0 0 transparent,
+      56px 0 0 0 transparent;
+  }
+  /* Light 2 on */
+  26% {
+    background: var(--alert);
+    box-shadow:
+      0 0 0 0 transparent,
+      14px 0 0 0 var(--alert),
+      28px 0 0 0 transparent,
+      42px 0 0 0 transparent,
+      56px 0 0 0 transparent;
+  }
+  /* Light 3 on */
+  38% {
+    background: var(--alert);
+    box-shadow:
+      0 0 0 0 transparent,
+      14px 0 0 0 var(--alert),
+      28px 0 0 0 var(--alert),
+      42px 0 0 0 transparent,
+      56px 0 0 0 transparent;
+  }
+  /* Light 4 on */
+  50% {
+    background: var(--alert);
+    box-shadow:
+      0 0 0 0 transparent,
+      14px 0 0 0 var(--alert),
+      28px 0 0 0 var(--alert),
+      42px 0 0 0 var(--alert),
+      56px 0 0 0 transparent;
+  }
+  /* All five on — hold */
+  62%,
+  78% {
+    background: var(--alert);
+    box-shadow:
+      0 0 0 0 transparent,
+      14px 0 0 0 var(--alert),
+      28px 0 0 0 var(--alert),
+      42px 0 0 0 var(--alert),
+      56px 0 0 0 var(--alert);
+  }
+  /* Lights out → go */
+  82%,
+  100% {
+    background: transparent;
+    box-shadow:
+      0 0 0 1px var(--rule) inset,
+      14px 0 0 0 transparent,
+      28px 0 0 0 transparent,
+      42px 0 0 0 transparent,
+      56px 0 0 0 transparent;
+  }
+}
+
+/* ---------------------- REDUCED MOTION ---------------------- */
+/* Sticky filter bar: keep Season/GP/Session/Driver filters in view on scroll.
+   Streamlit wraps the keyed container in a stLayoutWrapper that is the actual
+   flex item in the page flow, so sticky must be applied there. */
+[data-testid="stLayoutWrapper"]:has(> .st-key-filter-bar) {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--paper);
+  padding-top: var(--space-3);
+  padding-bottom: var(--space-3);
+  margin-bottom: var(--space-3);
+  border-bottom: 1px solid var(--rule-soft);
+}
+
+/* Selectbox filters: show pointer cursor instead of text caret */
+[data-testid="stSelectbox"],
+[data-testid="stSelectbox"] *,
+div[data-baseweb="select"],
+div[data-baseweb="select"] * {
+  cursor: pointer !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  /* Keep the start-lights visible (static red) for loading feedback */
+  .stApp div:has(> span > [data-testid="stSpinnerIcon"]) > div::before {
+    background: var(--alert);
+    box-shadow:
+      0 0 0 0 transparent,
+      14px 0 0 0 var(--alert),
+      28px 0 0 0 var(--alert),
+      42px 0 0 0 var(--alert),
+      56px 0 0 0 var(--alert);
+  }
+}

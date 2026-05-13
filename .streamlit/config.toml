@@ -1,0 +1,39 @@
+[server]
+headless = true
+
+[client]
+toolbarMode = "minimal"
+
+# Single [theme] with no [theme.dark] table locks the app to light mode —
+# Streamlit's Settings toggle only offers dark when [theme.dark] is defined.
+[theme]
+base = "light"
+
+# Core palette — mirrors assets/styles.css :root tokens
+primaryColor              = "#C5242A"
+backgroundColor           = "#FBF9F4"
+secondaryBackgroundColor  = "#EDEAE2"
+textColor                 = "#1A1A1C"
+linkColor                 = "#C5242A"
+borderColor               = "#E6E3DB"
+
+# Dataframe chrome
+dataframeBorderColor           = "#E6E3DB"
+dataframeHeaderBackgroundColor = "#E4E1D8"
+
+# Code blocks
+codeBackgroundColor = "#F3F0E8"
+codeTextColor       = "#1A1A1C"
+
+# Typography — matches body/display fonts loaded via @import in styles.css
+font         = "'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace"
+headingFont  = "'Titillium Web', sans-serif"
+codeFont     = "'Geist Mono', ui-monospace, monospace"
+
+# Shape
+baseRadius   = "4px"
+buttonRadius = "4px"
+
+# Chrome
+showWidgetBorder   = true
+showSidebarBorder  = false
