@@ -49,6 +49,9 @@ def load_session(year: int, gp: str, session_type: str = "R") -> fastf1.core.Ses
 
     session = fastf1.get_session(year, gp, session_type)
     session.load()
+    # session.load() silently warns instead of raising when data is unavailable.
+    # Probe .laps to surface the DataNotLoadedError early.
+    _ = session.laps
     return session
 
 

@@ -105,9 +105,13 @@ def render_qualifying_results(year: int, gp: str, race_session):
         q_session = load_session(year, gp, "Q")
     except Exception as e:
         logger.warning(f"Qualifying session not available for {year} {gp}: {e}")
-        return  # Silently skip if qualifying data isn't available
+        return
 
-    df = _get_team_color_fastest_laps(q_session)
+    try:
+        df = _get_team_color_fastest_laps(q_session)
+    except Exception as e:
+        logger.warning(f"Qualifying lap data not available for {year} {gp}: {e}")
+        return
     if df.empty:
         logger.info(f"No qualifying laps found for {year} {gp}")
         return
