@@ -1,7 +1,7 @@
 """Team-radio expander with lap-context tags."""
 import streamlit as st
 
-from src.services.team_radio import fetch_team_radio, map_radio_to_laps
+from src.services.team_radio import cached_radio_to_laps, fetch_team_radio
 
 
 def _lap_context_tags(lap, sc_laps, pit_info, lap_weather):
@@ -22,15 +22,22 @@ def _lap_context_tags(lap, sc_laps, pit_info, lap_weather):
     return " ".join(tags)
 
 
-def render_team_radio(session, driver_code, sc_laps, pit_info, lap_weather):
+def render_team_radio(session, driver_code, sc_laps, pit_info, lap_weather,
+                      year=None, gp=None, session_code=None):
     session_path = None
     try:
         session_path = session.session_info.get("Path")
     except Exception:
         session_path = None
 
-    radio_clips = fetch_team_radio(session_path) if session_path else []
-    driver_radio = map_radio_to_laps(radio_clips, session, session.laps, driver_code)
+    if session_path and year is not None:
+        driver_radio = cached_radio_to_laps(year, gp, session_code, driver_code, session_path)
+    elif session_path:
+        from src.services.team_radio import map_radio_to_laps
+        radio_clips = fetch_team_radio(session_path)
+        driver_radio = map_radio_to_laps(radio_clips, session, session.laps, driver_code)
+    else:
+        driver_radio = []
 
     if not driver_radio:
         return

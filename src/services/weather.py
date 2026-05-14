@@ -1,5 +1,6 @@
 """Weather data fetching and summarization."""
 import pandas as pd
+import streamlit as st
 
 
 def _as_seconds(val):
@@ -99,3 +100,12 @@ def summarize_weather(lap_weather):
         "rain_pct": rain_pct,
         "rain_windows": rain_windows,
     }
+
+
+@st.cache_data(show_spinner=False)
+def cached_weather_data(year: int, gp: str, session_code: str):
+    from src.services.fastf1_client import load_session
+    session = load_session(year, gp, session_code)
+    lap_weather = get_weather_per_lap(session, session.laps)
+    weather_summary = summarize_weather(lap_weather)
+    return lap_weather, weather_summary

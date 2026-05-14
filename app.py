@@ -7,7 +7,7 @@ import logging
 
 import streamlit as st
 
-from src.components.alternatives import compute_base_time, render_alternatives, simulate_all
+from src.components.alternatives import cached_simulate_all, compute_base_time, render_alternatives
 from src.components.compare import render_compare
 from src.components.driver_summary import render_driver_summary
 from src.components.lap_times import render_lap_times
@@ -22,13 +22,9 @@ from src.components.verdict import render_verdict
 from src.config import APP_NAME
 from src.logging_config import setup_logging
 from src.services.fastf1_client import available_seasons, get_event_schedule, init_cache, load_session
-from src.services.safety_car import (
-    detect_sc_periods,
-    get_sc_laps_set,
-    map_sc_periods_to_laps,
-)
+from src.services.safety_car import cached_sc_periods_mapped, get_sc_laps_set
 from src.services.strategy import detect_pit_laps_under_sc, get_driver_strategy
-from src.services.weather import get_weather_per_lap, summarize_weather
+from src.services.weather import cached_weather_data
 from src.state import reset_selection_on_race_change
 from src.utils.assets import f1_logo
 
@@ -193,11 +189,10 @@ def main():
         )
         st.stop()
 
-    # ── 4. Race-level derived data (weather + SC) ──
-    sc_periods_mapped = map_sc_periods_to_laps(detect_sc_periods(session), session.laps)
+    # ── 4. Race-level derived data (weather + SC, cached per session) ──
+    sc_periods_mapped = cached_sc_periods_mapped(year, gp, session_code)
     sc_laps = get_sc_laps_set(sc_periods_mapped)
-    lap_weather = get_weather_per_lap(session, session.laps)
-    weather_summary = summarize_weather(lap_weather)
+    lap_weather, weather_summary = cached_weather_data(year, gp, session_code)
 
     # ── 5. Masthead ──
     render_masthead(session, year, gp, session_code)
@@ -271,10 +266,12 @@ def main():
     valid_laps, valid_laps_clean, _ = render_lap_times(
         laps, sc_periods_mapped, weather_summary,
     )
-    render_team_radio(session, driver_code, sc_laps, pit_info, lap_weather)
+    render_team_radio(session, driver_code, sc_laps, pit_info, lap_weather,
+                      year, gp, session_code)
 
     base_time = compute_base_time(valid_laps_clean, sc_periods_mapped)
-    _, results_df = simulate_all(
+    _, results_df = cached_simulate_all(
+        year, gp, session_code, driver_code,
         actual_stints, total_laps, sc_periods_mapped, sc_laps, lap_weather, base_time,
     )
     render_alternatives(results_df)

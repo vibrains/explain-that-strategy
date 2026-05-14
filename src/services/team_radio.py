@@ -102,3 +102,12 @@ def map_radio_to_laps(radio_clips, session, laps_df, driver_code):
 
     mapped.sort(key=lambda x: x["timestamp_sec"])
     return mapped
+
+
+@st.cache_data(show_spinner=False)
+def cached_radio_to_laps(year: int, gp: str, session_code: str,
+                         driver_code: str, session_path: str):
+    from src.services.fastf1_client import load_session
+    session = load_session(year, gp, session_code)
+    radio_clips = fetch_team_radio(session_path)
+    return map_radio_to_laps(radio_clips, session, session.laps, driver_code)

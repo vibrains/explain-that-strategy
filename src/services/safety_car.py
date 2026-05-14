@@ -1,5 +1,6 @@
 """Detect Safety Car and VSC periods from FastF1 session data."""
 import pandas as pd
+import streamlit as st
 
 
 def detect_sc_periods(session):
@@ -145,3 +146,11 @@ def get_sc_laps_set(sc_periods_mapped):
         for lap in range(p["start_lap"], p["end_lap"] + 1):
             sc_laps[lap] = p["type"]
     return sc_laps
+
+
+@st.cache_data(show_spinner=False)
+def cached_sc_periods_mapped(year: int, gp: str, session_code: str):
+    from src.services.fastf1_client import load_session
+    session = load_session(year, gp, session_code)
+    periods = detect_sc_periods(session)
+    return map_sc_periods_to_laps(periods, session.laps)

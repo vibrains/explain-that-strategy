@@ -66,6 +66,14 @@ def simulate_all(actual_stints, total_laps, sc_periods_mapped, sc_laps,
     return actual_total, pd.DataFrame(rows).sort_values("Delta")
 
 
+@st.cache_data(show_spinner=False)
+def cached_simulate_all(year, gp, session_code, driver_code,
+                        actual_stints, total_laps, sc_periods_mapped,
+                        sc_laps, lap_weather, base_time):
+    return simulate_all(actual_stints, total_laps, sc_periods_mapped,
+                        sc_laps, lap_weather, base_time)
+
+
 def render_alternatives(results_df):
     st.markdown(
         '<div class="section-head">Alternative Strategies'
