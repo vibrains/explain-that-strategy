@@ -21,7 +21,7 @@ from src.components.team_radio import render_team_radio
 from src.components.verdict import render_verdict
 from src.config import APP_NAME
 from src.logging_config import setup_logging
-from src.services.fastf1_client import available_seasons, get_event_schedule, init_cache, load_session
+from src.services.fastf1_client import available_seasons, get_event_schedule, init_cache, load_session, load_session_light
 from src.services.safety_car import cached_sc_periods_mapped, get_sc_laps_set
 from src.services.strategy import detect_pit_laps_under_sc, get_driver_strategy
 from src.services.weather import cached_weather_data
@@ -79,12 +79,12 @@ def main():
     race_key = (year, gp, session_code)
     reset_selection_on_race_change(race_key)
 
-    # ── 2. Load session (cached; spinner shown if first time) ──
+    # ── 2. Fast session load — results only (no laps/weather/messages) ──
     logger.info(f"Loading session: {year} {gp} ({session_code})")
     session = None
     try:
-        session = load_session(year, gp, session_code)
-        logger.info(f"Successfully loaded session with {len(session.laps)} laps")
+        session = load_session_light(year, gp, session_code)
+        logger.info(f"Loaded session metadata for {year} {gp}")
     except Exception as e:
         logger.error(f"Failed to load session: {e}")
 
@@ -180,7 +180,6 @@ def main():
             unsafe_allow_html=True,
         )
         render_masthead(session, year, gp, session_code)
-        render_qualifying_results(year, gp, session)
         render_results_table(session, "")
         st.info(
             "Pick a driver from the **Driver** dropdown above to explore their "
@@ -189,7 +188,18 @@ def main():
         )
         st.stop()
 
-    # ── 4. Race-level derived data (weather + SC, cached per session) ──
+    # ── 4. Full session load — laps, weather, messages (deferred until driver selected) ──
+    try:
+        session = load_session(year, gp, session_code)
+        logger.info(f"Loaded full session with {len(session.laps)} laps")
+    except Exception as e:
+        logger.error(f"Failed to load full session: {e}")
+        st.error(
+            "Race data isn't available yet for this event. "
+            "Try selecting a completed race or an earlier season."
+        )
+        st.stop()
+
     sc_periods_mapped = cached_sc_periods_mapped(year, gp, session_code)
     sc_laps = get_sc_laps_set(sc_periods_mapped)
     lap_weather, weather_summary = cached_weather_data(year, gp, session_code)

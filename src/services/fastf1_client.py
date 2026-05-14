@@ -27,8 +27,36 @@ def available_seasons() -> List[int]:
 
 
 @st.cache_data(show_spinner="Lights out — pulling race data")
+def load_session_light(year: int, gp: str, session_type: str = "R") -> fastf1.core.Session:
+    """Fast session load — results and event info only (no laps/weather/messages).
+
+    Use for the initial page render (filter bar, masthead, results table)
+    before a driver is selected. Falls back to a full load if the light
+    load doesn't populate results.
+
+    Args:
+        year: Race season year.
+        gp: Grand Prix name or round number.
+        session_type: Session code ('R' for Race, 'S' for Sprint).
+
+    Returns:
+        Loaded FastF1 session object (results available, laps not loaded).
+    """
+    if not isinstance(year, int) or year < 2018:
+        raise ValueError(f"year must be an integer >= 2018, got {year}")
+    if not gp or not isinstance(gp, str):
+        raise ValueError(f"gp must be a non-empty string, got {gp}")
+
+    session = fastf1.get_session(year, gp, session_type)
+    session.load(laps=False, telemetry=False, weather=False, messages=False)
+    return session
+
+
+@st.cache_data(show_spinner="Crunching strategy data")
 def load_session(year: int, gp: str, session_type: str = "R") -> fastf1.core.Session:
-    """Load a FastF1 session with caching.
+    """Full session load — laps, weather, and messages (no telemetry).
+
+    Called when a driver is selected and full analysis data is needed.
 
     Args:
         year: Race season year.
